@@ -1,0 +1,91 @@
+{
+  "type": "record",
+  "name": "InventoryEvent",
+  "namespace": "com.inventory.sync.avro",
+  "doc": "Canonical inventory event representing any change to inventory levels across warehouses, stores, and e-commerce",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": "string",
+      "doc": "Unique identifier for this event (UUID)"
+    },
+    {
+      "name": "eventType",
+      "type": {
+        "type": "enum",
+        "name": "EventType",
+        "symbols": [
+          "RECEIPT",
+          "TRANSFER_IN",
+          "TRANSFER_OUT",
+          "ADJUSTMENT",
+          "SALE",
+          "RETURN",
+          "RESERVATION",
+          "RELEASE",
+          "FULFILLMENT"
+        ],
+        "doc": "Type of inventory event"
+      },
+      "doc": "The type of inventory operation"
+    },
+    {
+      "name": "sku",
+      "type": "string",
+      "doc": "Stock Keeping Unit identifier"
+    },
+    {
+      "name": "locationId",
+      "type": "string",
+      "doc": "Location identifier (e.g., warehouse-001, store-123, ONLINE)"
+    },
+    {
+      "name": "quantityDelta",
+      "type": "long",
+      "doc": "Change in quantity. Positive for additions, negative for reductions"
+    },
+    {
+      "name": "sourceSystem",
+      "type": "string",
+      "doc": "Source system that generated the event (WMS, POS, ECOMMERCE)"
+    },
+    {
+      "name": "timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Event timestamp in milliseconds since epoch"
+    },
+    {
+      "name": "correlationId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Correlation ID for tracking related events"
+    },
+    {
+      "name": "userId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "User who performed the action (optional)"
+    },
+    {
+      "name": "reason",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Reason for adjustment or change (optional)"
+    },
+    {
+      "name": "metadata",
+      "type": [
+        "null",
+        {
+          "type": "map",
+          "values": "string"
+        }
+      ],
+      "default": null,
+      "doc": "Additional metadata as key-value pairs"
+    }
+  ]
+}
