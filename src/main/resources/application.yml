@@ -1,0 +1,111 @@
+# Kafka Streams Configuration for Inventory Aggregation
+kafka:
+  bootstrap-servers: localhost:9092
+  application-id: inventory-aggregation-app
+  
+  # Schema Registry Configuration
+  schema-registry:
+    url: http://localhost:8081
+  
+  # Stream Processing Configuration
+  streams:
+    replication-factor: 3
+    num-stream-threads: 3
+    
+    # State Store Configuration
+    state-dir: /tmp/kafka-streams
+    
+    # Commit Interval
+    commit-interval-ms: 10000
+    
+    # Processing Guarantees
+    processing-guarantee: exactly_once_v2
+    
+    # Consumer Configuration
+    consumer:
+      session-timeout-ms: 30000
+      heartbeat-interval-ms: 10000
+      max-poll-records: 500
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+    
+    # Producer Configuration
+    producer:
+      compression-type: snappy
+      batch-size: 16384
+      linger-ms: 10
+      max-in-flight-requests-per-connection: 5
+      enable-idempotence: true
+      acks: all
+    
+    # Avro Configuration
+    properties:
+      key.converter: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value.converter: io.confluent.kafka.serializers.KafkaAvroSerializer
+      key.converter.schema.registry.url: ${kafka.schema-registry.url}
+      value.converter.schema.registry.url: ${kafka.schema-registry.url}
+  
+  # Topic Configuration
+  topics:
+    input:
+      name: inventory-events
+      partitions: 6
+      replication-factor: 3
+      retention-ms: 604800000  # 7 days
+      
+    output:
+      name: inventory-aggregates
+      partitions: 6
+      replication-factor: 3
+      retention-ms: -1  # Infinite retention (compacted topic)
+      cleanup-policy: compact
+      min-compaction-lag-ms: 60000
+      
+    dlq:
+      name: inventory-events-dlq
+      partitions: 3
+      replication-factor: 3
+      retention-ms: 2592000000  # 30 days
+
+# Monitoring Configuration
+monitoring:
+  metrics:
+    enabled: true
+    reporters:
+      - jmx
+    recording-level: INFO
+  
+  # Health Check Configuration
+  health:
+    enabled: true
+    check-interval-ms: 30000
+
+# Application Configuration
+application:
+  # Low Stock Configuration
+  low-stock:
+    default-threshold: 10
+    alert-enabled: true
+  
+  # Location Prefixes
+  location:
+    warehouse-prefix: WH-
+    store-prefix: ST-
+    ecommerce-prefix: EC-
+  
+  # Processing Configuration
+  processing:
+    max-retry-attempts: 3
+    retry-backoff-ms: 1000
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.inventory: DEBUG
+    org.apache.kafka: WARN
+    org.apache.kafka.streams: INFO
+    io.confluent: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
