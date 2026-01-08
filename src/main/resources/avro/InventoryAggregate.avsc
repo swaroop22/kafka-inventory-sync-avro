@@ -1,0 +1,98 @@
+{
+  "type": "record",
+  "name": "InventoryAggregate",
+  "namespace": "com.inventory.avro",
+  "doc": "Aggregated inventory state across all locations",
+  "fields": [
+    {
+      "name": "sku",
+      "type": "string",
+      "doc": "Stock Keeping Unit - unique product identifier"
+    },
+    {
+      "name": "productName",
+      "type": "string",
+      "doc": "Product name"
+    },
+    {
+      "name": "totalQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Total quantity across all locations"
+    },
+    {
+      "name": "warehouseQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Total quantity in warehouses"
+    },
+    {
+      "name": "storeQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Total quantity in stores"
+    },
+    {
+      "name": "ecommerceQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Quantity reserved for e-commerce"
+    },
+    {
+      "name": "reservedQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Total quantity reserved (pending orders)"
+    },
+    {
+      "name": "availableQuantity",
+      "type": "long",
+      "default": 0,
+      "doc": "Available quantity for sale (total - reserved)"
+    },
+    {
+      "name": "locationBreakdown",
+      "type": {
+        "type": "map",
+        "values": "long"
+      },
+      "default": {},
+      "doc": "Quantity breakdown by location ID"
+    },
+    {
+      "name": "lastUpdated",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Last update timestamp"
+    },
+    {
+      "name": "version",
+      "type": "long",
+      "default": 0,
+      "doc": "Version for optimistic locking"
+    },
+    {
+      "name": "lowStockThreshold",
+      "type": "long",
+      "default": 10,
+      "doc": "Threshold for low stock alerts"
+    },
+    {
+      "name": "isLowStock",
+      "type": "boolean",
+      "default": false,
+      "doc": "Indicator if stock is below threshold"
+    },
+    {
+      "name": "metadata",
+      "type": ["null", {
+        "type": "map",
+        "values": "string"
+      }],
+      "default": null,
+      "doc": "Additional metadata as key-value pairs"
+    }
+  ]
+}
